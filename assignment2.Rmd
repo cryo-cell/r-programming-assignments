@@ -16,25 +16,25 @@ Use the vector:
 assignment2 <- c(16, 18, 14, 22, 27, 17, 19, 17, 17, 22, 20, 22)
 
 Consider this function:
+```{r}
+#assignment2 <- c(16, 18, 14, 22, 27, 17, 19, 17, 17, 22, 20, 22)
 
-assignment2 <- c(16, 18, 14, 22, 27, 17, 19, 17, 17, 22, 20, 22)
+#myMean <- function(assignment2) {
+#  return(sum(assignment) / length(someData))
+#}
 
-myMean <- function(assignment2) {
-  return(sum(assignment) / length(someData))
-}
-
-myMean(assignment2) 
-
+#myMean(assignment2) 
+```
 and record the output or error.
 On both your blog and GitHub repository, post..
 
-The result or error message from testing myMean:
+-The result or error message from testing myMean:
 (Error in myMean(assignment2) : object 'assignment' not found)
 
-An explanation of why the function fails or succeeds (hint: variable names):
+-An explanation of why the function fails or succeeds (hint: variable names):
+Scope Gap: A good function should take an input x, process x, and return a result like a "black box". If your function is looking for a specific name like assignment2 but that variable name isn't defined inside the function's local scope, it will break or produce unpredictable results.
 
-
-A corrected version of myMean that correctly returns the mean of assignment2:
+-A corrected version of myMean that correctly returns the mean of assignment2:
 ```{r}
 myMean <- function(x) {
   sum <- sum(x)
