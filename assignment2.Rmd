@@ -51,4 +51,4 @@ myMean(assignment2)
 ```
 Link to the blog:
 
-https://www.blogger.com/blog/post/edit/1889291094899577211/426382815509836877 
+https://rstue.blogspot.com/2026/01/module-2-assignment.html 
