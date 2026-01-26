@@ -13,16 +13,39 @@ When you click the **Knit** button a document will be generated that includes bo
 
 Evaluate myMean Function
 Use the vector:
-```{r}
 assignment2 <- c(16, 18, 14, 22, 27, 17, 19, 17, 17, 22, 20, 22)
-```
+
 Consider this function:
-```{r}
+
+assignment2 <- c(16, 18, 14, 22, 27, 17, 19, 17, 17, 22, 20, 22)
+
 myMean <- function(assignment2) {
   return(sum(assignment) / length(someData))
 }
-```
-In RStudio, run 
-```{r}
+
 myMean(assignment2) 
+
+and record the output or error.
+On both your blog and GitHub repository, post..
+
+The result or error message from testing myMean:
+(Error in myMean(assignment2) : object 'assignment' not found)
+
+An explanation of why the function fails or succeeds (hint: variable names):
+
+
+A corrected version of myMean that correctly returns the mean of assignment2:
+```{r}
+myMean <- function(x) {
+  sum <- sum(x)
+  nLength <- length(x)
+  
+  result <- sum/nLength
+  
+  return(result)
+}
+
+assignment2 <- c(16, 18, 14, 22, 27, 17, 19, 17, 17, 22, 20, 22)
+
+myMean(assignment2)
 ```
