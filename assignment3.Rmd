@@ -1,0 +1,33 @@
+---
+title: "assignment3"
+author: "Cryo"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+Installation Setup
+
+
+```{r setup}
+#install.packages("formattable")
+library(formattable)
+```
+Assignment Chunk
+
+```{r}
+#create vector variables 
+names <- c("Jeb", "Donald", "Ted", "Marco", "Carly", "Hillary", "Berine")
+abcVotes <- c(4, 62, 51, 21, 2, 14, 15)
+cbsVotes <- c(12, 75, 43, 19, 1, 21, 19) 
+
+#create data.frame
+electionFrame <- data.frame(names, abcVotes, cbsVotes)
+
+View(electionFrame)
+
+#adjust visualization for quick insights
+formattable(electionFrame, list(
+  abcVotes = color_tile("transparent", "blue"),
+  cbsVotes = color_tile("transparent", "red")
+))
+```
