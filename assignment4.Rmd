@@ -1,0 +1,102 @@
+---
+title: "Assignment 4"
+author: "Cryo"
+date: "`r Sys.Date()`"
+output: html_document
+---
+Your assignment:
+
+The following data was collected by the local hospital. 
+This data set contains 5 variables based on the observation of 10 patients. 
+In addition to the measurements of the patients checking in to the hospital that night, 
+this data provides 
+patients' histories regarding the frequency of their visits to the hospital in the last 12 months.
+This data displays 
+the measurement of blood pressure, 
+first assessment by a general doctor (bad=1, good =0) titled "first," 
+the second assessment by an external doctor (called "second"), 
+and the last row provides the head of the emergency unit's decision regarding immediate care for the patient based on the values 0 or 1 (low = 0, high =1).
+The names of your variables are as follows: 
+
+"Freq","bloodp","first”, " second”, ”finaldecision”
+
+The rows 
+
+1.    "0.6","103","bad","low","low”
+2.     "0.3","87","bad","low","high”
+3.     "0.4","32","bad","high","low”
+4.      "0.4","42","bad","high","high"
+5.     "0.2","59","good","low","low”
+6.      "0.6","109","good","low","high”
+7.     "0.3","78","good","high","low”
+8.      "0.4","205","good","high","high”
+9.      "0.9","135",”NA","high","high"
+10.    "0.2","176",”bad","high","high”
+
+Here is a clarification hint:
+Frequency <- c(0.6,0.3,0.4,......
+BP <- c(103,87,32,42,.....
+First <- c(1,1,1,.....
+Second <- c(0,0,1,1,...
+FinalDecision <- c(0,1,0,1,...
+
+A. Your first assignment: Create a side-by-side boxplot (>boxplot(x, ...)) and and histogram (>hist(x,...)
+In the following examples, I used different data containers for the boxplot and histogram visual display. 
+1. Boxplot
+I use the following data container (3,2,5,6,4,8,1,2,3,2,4)
+
+A <- c(3, 2, 5, 6, 4, 8, 1, 2, 3, 2, 4)
+boxplot(A)
+Barplot.png  
+
+2. Histogram I used following data container (2,4,5,7,12,14,16)
+B <- c(2, 4, 5, 7, 12, 14, 16)
+hist(B)
+
+histogram.png  
+B. Discuss the outcome of your results regarding patients BPs & MD’s Ratings.
+C. Post your result in your blog and code on GitHub. 
+```{r setup}
+
+```
+
+```{r}
+#fix quotations in list & convert to vector
+rows <- c("0.6","103","bad","low","low",
+"0.3","87","bad","low","high",
+"0.4","32","bad","high","low",
+"0.4","42","bad","high","high",
+"0.2","59","good","low","low",
+"0.6","109","good","low","high",
+"0.3","78","good","high","low",
+"0.4","205","good","high","high",
+"0.9","135","NA","high","high",
+"0.2","176","bad","high","high")
+
+#create matrix using ncol and byrow
+m <- matrix(rows, ncol = 5, byrow = TRUE)
+m
+
+#create a dataframe from the matrix using as.data.frame
+df <- as.data.frame(m)
+
+#set the colnames according to instructions
+colnames(df) <- c("Freq", "bloodp", "first", "second", "finaldecision")
+
+#clean null values
+df[df=="NA"] <- "bad"
+df
+#convert first two columns to numeric
+df$Freq <- as.numeric(df$Freq)
+df$bloodp <- as.numeric(df$bloodp)
+
+#convert the remaining colums to boolean
+df$first <- ifelse(df$first == "bad", 1, 0)
+df$second <- ifelse(df$second == "low", 1, 0)
+df$finaldecision <- ifelse(df$finaldecision == "low", 0, 1)
+
+df
+#create hist and boxplot using df columns
+hist(df$bloodp)
+boxplot(df$Freq)
+```
