@@ -56,6 +56,8 @@ hist(B)
 histogram.png  
 B. Discuss the outcome of your results regarding patients BPs & MD’s Ratings.
 C. Post your result in your blog and code on GitHub. 
+
+https://rstue.blogspot.com/2026/02/module-4-programming-structure.html
 ```{r setup}
 
 ```
@@ -92,11 +94,13 @@ df$bloodp <- as.numeric(df$bloodp)
 
 #convert the remaining colums to boolean
 df$first <- ifelse(df$first == "bad", 1, 0)
-df$second <- ifelse(df$second == "low", 1, 0)
-df$finaldecision <- ifelse(df$finaldecision == "low", 0, 1)
+df$second <- ifelse(df$second == "high", 1, 0)
+df$finaldecision <- ifelse(df$finaldecision == "high", 1, 0)
 
 df
 #create hist and boxplot using df columns
+plot(df$bloodp, df$Freq)
 hist(df$bloodp)
-boxplot(df$Freq)
+boxplot(df$bloodp)
+boxplot(df$bloodp ~ df$finaldecision)
 ```
