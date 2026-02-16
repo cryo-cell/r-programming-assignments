@@ -1,0 +1,63 @@
+---
+title: 'Assignment #5'
+author: "Cryo"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+#install.packages("plotly")
+#install.packages("tidyverse")
+install.packages("readxl")
+
+library(plotly)
+library(tidyverse)
+library(readxl)
+
+
+```
+
+## R Markdown
+
+Load the dataset for Assignment 5 using readxl
+
+```{r}
+dataset <- read_xlsx("C:/Users/cruos/Downloads/Module5.xlsx")
+df <- data.frame(dataset)
+df
+```
+
+## Including Plots
+
+Create Plotly Ranking and Part to whole plots:
+
+```{r}
+dfsorted <- df[order(df$Average.Position, decreasing = TRUE), ]
+
+fig_rank <- plot_ly(
+  dfsorted,
+  x = ~Average.Position,
+  y = ~reorder(...1, Average.Position),
+  type = 'bar'
+) %>%
+  layout(title = "Ranking of Average Position",
+         xaxis = list(title = "Position Value"),
+         yaxis = list(title = "Interval ID (Ranked)"))
+
+fig_rank
+
+fig_part <- plot_ly(
+  df, 
+  labels = ~...1, 
+  values = ~Average.Position, 
+  type = 'pie',
+  hole = 0.5
+) %>%
+  layout(
+    title = "Contribution of Each Interval to Total Position",
+    showlegend = TRUE
+  )
+
+fig_part
+```
+
