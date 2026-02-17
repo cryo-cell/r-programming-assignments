@@ -1,0 +1,74 @@
+---
+title: 'Module #6 Doing Math'
+author: "Cryo"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+
+```
+Answer the following questions and post your answer on your blog:
+
+1. Consider A=matrix(c(2,0,1,3), ncol=2) and B=matrix(c(5,2,4,-1), ncol=2).
+    a) Find A + B
+    b) Find A - B
+
+2. Using the diag() function to:
+    build a matrix of size 4 with: 
+    the following values in the diagonal 4,1,2,3.
+
+3. Generate the following matrix:
+
+  ## [,1] [,2] [,3] [,4] [,5]
+  ## [1,] 3 1 1 1 1
+  ## [2,] 2 3 0 0 0
+  ## [3,] 2 0 3 0 0
+  ## [4,] 2 0 0 3 0
+  ## [5,] 2 0 0 0 3
+  
+  Hint: You can use the command diag() to build it.
+
+```{r 1}
+A <- matrix(c(2,0,1,3), ncol=2)
+A
+B <- matrix(c(5,2,4,-1), ncol=2)
+B
+
+sumAB <- A + B
+sumAB
+diffAB <- A - B
+diffAB
+
+
+```
+
+2. Using the diag() function to build a matrix of size 4 with the following values in the diagonal 4,1,2,3.
+
+```{r 2}
+numbertwo <- diag(c(4,1,2,3))
+numbertwo
+```
+3. Generate the following matrix:
+
+## [,1] [,2] [,3] [,4] [,5]
+## [1,] 3 1 1 1 1
+## [2,] 2 3 0 0 0
+## [3,] 2 0 3 0 0
+## [4,] 2 0 0 3 0
+## [5,] 2 0 0 0 3
+Hint: You can use the command diag() to build it.
+
+```{r 3}
+# Step 1: Create a 5x5 matrix of zeros
+mat <- matrix(0, nrow = 5, ncol = 5)
+
+# Step 2: Set the diagonal to 3
+diag(mat) <- 3
+#Step 3: Set first row to 1 from 2:5
+mat[1, 2:5] <- 1
+# Step 4: Set first column to 2 from 2:5
+mat[2:5, 1]<- 2
+
+mat
+```

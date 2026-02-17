@@ -1,0 +1,28 @@
+---
+title: 'Assignment #6 Graphic'
+author: "Cryo"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup}
+
+```
+Create your first basic graphic in R as I outlined in the video and PowerPointDownload power point.
+
+Post the visual on your blog and discuss if your basic visualization in R fits or maybe not fit into Few's and Yau's discussions on how to conduct basic visualization based on simple descriptive analysis.
+
+```{r wealth}
+
+countries <- c("Asia", "Europe", "North America", "South America", "Africa", "Oceania")
+wealth <- c(0.36, 0.28,0.27, 0.04,0.03,0.02)
+pct <- wealth * 100
+
+lbls <- paste(countries, pct)
+lbls<- paste(lbls,"%", sep = "")
+
+pie(wealth, labels= lbls,
+  main="Global GDP Distribution")
+legend("bottomleft", legend=lbls, bty = "n", cex = 0.7, fill= c("white", "cadetblue3", "pink", "darkslategray2", "lavender", "beige"))
+
+```

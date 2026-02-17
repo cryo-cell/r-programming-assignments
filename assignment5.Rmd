@@ -37,12 +37,12 @@ dfsorted <- df[order(df$Average.Position, decreasing = TRUE), ]
 fig_rank <- plot_ly(
   dfsorted,
   x = ~Average.Position,
-  y = ~reorder(...1, Average.Position),
+  y = ~reorder(Time, Average.Position),
   type = 'bar'
 ) %>%
   layout(title = "Ranking of Average Position",
          xaxis = list(title = "Position Value"),
-         yaxis = list(title = "Interval ID (Ranked)"))
+         yaxis = list(title = "Time Interval"))
 
 fig_rank
 
