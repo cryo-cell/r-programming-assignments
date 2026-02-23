@@ -11,7 +11,7 @@ output: html_document
 Create your first basic graphic in R as I outlined in the video and PowerPointDownload power point.
 
 Post the visual on your blog and discuss if your basic visualization in R fits or maybe not fit into Few's and Yau's discussions on how to conduct basic visualization based on simple descriptive analysis.
-
+  
 ```{r wealth}
 
 countries <- c("Asia", "Europe", "North America", "South America", "Africa", "Oceania")
@@ -26,3 +26,4 @@ pie(wealth, labels= lbls,
 legend("bottomleft", legend=lbls, bty = "n", cex = 0.7, fill= c("white", "cadetblue3", "pink", "darkslategray2", "lavender", "beige"))
 
 ```
+Blog Link: https://sizzleyezation.blogspot.com/2026/02/module-6-create-your-first-basic-graphic.html 
