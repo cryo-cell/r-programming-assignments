@@ -72,3 +72,4 @@ mat[2:5, 1]<- 2
 
 mat
 ```
+https://rstue.blogspot.com/2026/02/module-6-doing-math-in-r-part-2.html
