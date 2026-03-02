@@ -1,0 +1,71 @@
+---
+title: "S3 vs S4"
+author: "Vashay Carpenter"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+s3_set <- list(name="VaShay", age = "Elderly", GPA = 3.5)
+s3_set
+head(s3_set)
+summary(s3_set)
+
+setClass("student", 
+         slots = list(name = "character", age = "numeric", GPA = "numeric"))
+
+s4_set <- new("student", name = "VaShay", age = 31, GPA = 3.5)
+s4_set@name
+isS4(s4_set)
+```
+
+Module # 7 assignment
+
+
+Download any type of data (from the web or use datasets package) or create your own set. 
+
+
+
+Then, on the second step, determine if generic function as discussed in this module can be assigned to your data set, and if not, why? (Example, here is list of data set in R)
+data("mtcars")
+head (mtcars, 6)
+list(mtcars, 6)
+
+In third and last step, explore if S3 and S4 can be assigned to your data set.
+ 
+In your blog, discuss the following questions:
+
+How do you tell what OO system (S3 vs. S4) an object is associated with?
+
+How do you determine the base type (like integer or list) of an object?
+
+What is a generic function?
+
+What are the main differences between S3 and S4?
+
+In your GitHub, create two examples of S3 and S4.
+
+
+ 
+
+Example of data set for S3
+
+s <- list(name = "Myself", age = 29, GPA = 3.5) 
+> s3
+$name
+[1] "Myself"
+$age
+[1] 29
+$GPA
+[1] 3.5
+For S4 it is a reminder, S4 objects are created using the new() function. 
+
+> s4 <- new("student",name="Myself", age=29, GPA=3.5)
+ > s4
+An object of class "student"
+Slot "name":
+[1] "Myself"
+Slot "age":
+[1] 29
+Slot "GPA": 
+[1] 3.5 
