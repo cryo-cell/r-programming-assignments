@@ -1,0 +1,123 @@
+---
+title: 'Module #7'
+author: "Vashay Carpenter"
+date: "`r Sys.Date()`"
+output: html_document
+---
+Objective:
+In this assignment, you will apply what you've learned about distribution analysis by creating your own visualizations in R. Your goal is to test how distributions differ across variables and to reflect on the effectiveness of your visual approach based on recommendations from Few and Yau.
+
+```{r setup, include=FALSE}
+#install.packages("ggplot2")
+library("ggplot2")
+```
+
+Step 1: Choose a Dataset
+Download the dataset used in the class the dataset used in the class presentation
+Or 
+use the built-in R dataset mtcars by typing mtcars into your R console.
+
+```{r cars}
+cars_original <- data.frame(mtcars)
+```
+
+Step 2: Import the Dataset into RStudio
+Follow this tutorial to import data into RStudio: How to Import Data in RStudio:
+https://support.rstudio.com/hc/en-us/articles/218611977-Importing-Data-with-RStudio
+
+```{r pressure, echo=FALSE}
+#move the categorical column "cyl" to the end of the db
+cars <- cars_original[,c(setdiff(names(cars_original),"cyl"), "cyl")]
+cars
+#columns 1 - 6 now contain the continuous variables
+colnames(cars)
+```
+Step 3: Create a Distribution Visualization
+Use ggplot2, base R, or any R package you’re comfortable with, to create a visual representation of your data's distribution.
+
+Try:
+Histogram or Density Plot (for continuous variables)
+
+```{r hist}
+par(mfrow=c(3, 3))
+colnames <- dimnames(cars)[[2]]
+for (i in 1:6) {
+    hist(cars[,i], main=colnames[i], probability=TRUE, col="gray", border="white")
+}
+
+#To determine which cyl cars get the most/least Miles per Gallon highlighting outliers
+ggplot(cars, aes(x = as.factor(cyl), y = mpg, fill = as.factor(cyl))) +
+  geom_boxplot(outlier.color = "red") +
+  
+  theme_classic() +
+  labs(title = "MPG Range Across Cylinder Groups",
+       x = "Cylinders",
+       y = "Miles Per Gallon")
+
+#To determine which gear cars are the heaviest/lightest highlighting outliers
+ggplot(cars, aes(x = as.factor(gear), y = wt, fill = as.factor(gear))) +
+  geom_boxplot(outlier.color = "red") +
+  theme_classic() +
+  labs(title = "Wt Range Across Gear Groups",
+       x = "Gears",
+       y = "Weight (Tons)")
+
+
+```
+
+Bar plot (for categorical distributions)
+
+```{r bar}
+par(mfrow=c(2, 3)) # 2x3 GRID FOR THE 5 CATEGORICAL COLS
+for (i in 7:11) {
+    counts <- table(cars[, i])
+    barplot(counts, 
+            main = colnames(cars)[i], 
+            col = "steelblue",
+            border = "white")
+}
+
+```
+Grid of scatter plots or faceted plots (as suggested in Yau’s examples)
+
+```{r scatter}
+ggplot(cars, aes(x = mpg, fill = as.factor(cyl))) +
+  geom_histogram(bins = 10, color = "white", alpha = 0.7) +
+  facet_grid(cyl ~ .) + 
+  theme_light() +
+  labs(title = "MPG Distribution Aligned by Cylinder Count",
+       subtitle = "Demonstrating Few's Aligned Axis Principle",
+       x = "Miles Per Gallon",
+       y = "Frequency",
+       fill = "Cylinders") +
+  theme(legend.position = "none")
+
+ggplot(cars, aes(x = wt, fill = as.factor(gear))) +
+  geom_histogram(bins = 10, color = "white", alpha = 0.7) +
+  facet_grid(gear ~ .) + 
+  theme_light() +
+  labs(title = "Weight Distribution Aligned by Gear Count",
+       subtitle = "Demonstrating Few's Aligned Axis Principle",
+       x = "Weight (tons)",
+       y = "Frequency",
+       fill = "Gears") +
+  theme(legend.position = "none")
+```
+
+**Make sure your visualization follows Few’s recommendations for clear distribution design—such as using aligned axes, meaningful color, and reference grids for comparison.**
+
+
+Step 4: Write a Blog Post
+Post your visualization and a short write-up on your blog. Your post should include:
+
+1. A copy or embedded image of your distribution visualization
+2.The name of the dataset used (class dataset, mtcars, or any database you find and like. )
+3.A paragraph reflecting on:
+What patterns or distributions did your visualization reveal?
+How your design choices aligned (or did not align) with Few’s and Yau’s recommendations
+Whether you agree with Few’s critique of how distributions are commonly presented in visual analytics
+
+Additional Learning Resources:
+Nathan Yau’s Blog: How to Visualize and Compare DistributionsLinks to an external site.
+RStudio: Importing DataLinks to an external site.
+Reminder: Your focus is not just to create a graph—but to evaluate and interpret how well it reflects distribution characteristics. Use this opportunity to explore the relationship between statistical structure and visual form.
