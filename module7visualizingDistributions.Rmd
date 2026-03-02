@@ -117,6 +117,8 @@ What patterns or distributions did your visualization reveal?
 How your design choices aligned (or did not align) with Few’s and Yau’s recommendations
 Whether you agree with Few’s critique of how distributions are commonly presented in visual analytics
 
+https://sizzleyezation.blogspot.com/2026/03/module-7-assignment-visualizing.html
+
 Additional Learning Resources:
 Nathan Yau’s Blog: How to Visualize and Compare DistributionsLinks to an external site.
 RStudio: Importing DataLinks to an external site.
