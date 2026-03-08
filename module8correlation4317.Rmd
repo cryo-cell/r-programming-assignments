@@ -1,0 +1,87 @@
+---
+title: 'Module #8 Correlation Analysis ggplot2'
+author: "Vashay Carpenter"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+#install.packages("ggcorrplot")
+#install.packages("ggplot2")
+#install.packages("gridExtra")
+library("ggcorrplot")
+library("ggplot2")
+library("gridExtra")
+```
+
+## R Markdown
+
+Objective:
+In this assignment, you will explore relationships between variables using correlation or regression analysis and visualize them using ggplot2 in R. You’ll apply best practices from our textbook and lecture—especially using grid layouts to enhance comparison—and reflect on Few’s design principles.
+
+
+Step 1: Choose Your Dataset
+Download the dataset used in the class presentation or find your own data.
+Or use the built-in mtcars dataset in R by simply typing mtcars in the R console.
+```{r cars}
+cars <- data.frame(mtcars)
+```
+Step 3: Conduct Correlation or Regression Analysis
+Start by exploring variable relationships:
+
+Use cor() to compute correlation matrices.
+Use lm() for linear regression models.
+Use ggplot2 for visualization:
+geom_point() for scatter plots
+stat_smooth(method = "lm") to add regression lines
+facet_wrap() or gridExtra to arrange multiple plots
+For help with correlation functions: StatMethods: Correlation Analysis:
+```{r pressure, echo=FALSE}
+cars_corr_matrix <- cor(cars)
+head(cars_corr_matrix)
+
+lmWt <- lm(mpg ~ wt, data = mtcars)
+summary(lmWt)
+
+lmHp <- lm(mpg ~ hp, data = mtcars)
+summary(lmHp)
+
+```
+Step 4: Create Your Visual in ggplot2
+Design a visual that shows either:
+
+A correlation matrix or multiple scatter plots to assess associations
+A regression line showing the predictive relationship between variables
+Apply design suggestions from Few and Yau:
+
+Use a grid layout or facet design for side-by-side comparison
+Label axes clearly, minimize clutter, and use neutral color schemes
+
+```{r}
+p1 <- ggplot(cars, aes(x = wt, y = mpg)) +
+  geom_point(alpha = 0.6) +
+  stat_smooth(method = "lm", color = "darkred", se = FALSE) +
+  theme_minimal() +
+  labs(title = "Weight vs. MPG", x = "Weight (1000 lbs)", y = "MPG")
+
+p2 <- ggplot(cars, aes(x = hp, mpg)) +
+  geom_point(alpha = 0.6) +
+  stat_smooth(method = "lm", color = "darkblue", se =  FALSE) +
+  theme_minimal() +
+  labs(title = "Horse Power vs. MPG", x = "Horse Power", y = "MPG")
+
+grid.arrange(p1, p2, ncol=2)
+```
+Step 5: Reflect and Share
+Create a short blog post that includes:
+
+Your visualization(s) using ggplot2
+A short write-up answering:
+
+What patterns or relationships did you observe? (Cars with increasing wt lose out on mpg)
+How did your use of grid layout or facets enhance interpretation? 
+In your opinion, how do Few’s recommendations help or hinder your design choices? (what recommendations?)
+Post your blog link on the Canvas discussion board for Module #8.
+Reminder: This assignment is about learning to visualize relationships between variables. Don’t worry about perfection—focus on exploration, clarity, and reflecting on design choices.
+
+
