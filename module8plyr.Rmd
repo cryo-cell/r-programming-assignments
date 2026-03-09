@@ -1,0 +1,59 @@
+```{r} 
+# Required packages
+
+#install.packages("plyr")
+#install.packages("ggplot2")
+require(pryr)
+require(ISLR)
+require(boot)
+library(data.table)
+library(plyr)
+library(ggplot2)
+```
+Step 1
+```{r}
+# Read file from computer via prompt
+# Use sep="," to correctly parse the columns
+Student <- read.table("C:/Users/cruos/Downloads/Assignment6.txt", header = TRUE, sep = ",")
+
+View(Student)
+# Run "mean" using Sex as the category via plyr
+# StudentAverage = ddply(Student,"Sex",transform,Grade.Average=mean(Grade))
+StudentAverage <- ddply(Student, "Sex", transform, Grade.Average = mean(Grade))
+
+View(StudentAverage)
+# Write output to file
+write.table(StudentAverage, "Students_Gendered_Mean.txt", row.names = FALSE)
+
+```
+Step 2
+
+```{r}
+# Filter for names containing the letter 'i'
+i_students <- subset(Student, grepl("i", Student$Name, ignore.case = TRUE))
+View(i_students)
+```
+Step 3
+
+```{r}
+# Write filtered data set to CSV
+write.csv(i_students, "Filtered_Names_I.csv", row.names = FALSE)
+
+```
+
+Visual Representation
+
+```{r}
+summary_data <- ddply(Student, "Sex", summarise, Mean_Grade = mean(Grade))
+
+ggplot(summary_data, aes(x = Sex, y = Mean_Grade, fill = Sex)) +
+  geom_bar(stat = "identity", width = 0.6) +
+  geom_text(aes(label = round(Mean_Grade, 2)), vjust = -0.5) + #vjust moves the labels above the bars for increased visibility
+  theme_minimal() +
+  labs(title = "Average Grade Performance by Sex",
+       subtitle = "Calculated via plyr Split-Apply-Combine",
+       y = "Mean Grade",
+       x = "Category") +
+  scale_fill_manual(values = c("Female" = "#3498db", "Male" = "#e74c3c"))
+
+```
