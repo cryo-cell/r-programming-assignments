@@ -57,3 +57,6 @@ ggplot(summary_data, aes(x = Sex, y = Mean_Grade, fill = Sex)) +
   scale_fill_manual(values = c("Female" = "#3498db", "Male" = "#e74c3c"))
 
 ```
+
+Blog Link:
+https://rstue.blogspot.com/2026/03/module-8-inputoutput-string.html
