@@ -1,0 +1,86 @@
+---
+title: "Module 9 R Programming"
+author: "Vashay Carpenter"
+date: "`r Sys.Date()`"
+output: html_document
+---
+Install packages
+```{r setup, include=FALSE}
+#install.packages("pdftools") 
+#install.packages("stringr") required to use str_split
+#install.packages("ggplot2")
+#install.packages("tidyverse")
+#install.packages("corrgram")
+library(stringr)
+library(pdftools)
+library(ggplot2)
+library(tidyverse)
+```
+
+## R Markdown
+We will first create a usable csv file for our plot
+
+```{r cars}
+# Load the CSV data; disable automatic row naming to preserve structure
+df_raw <- read.csv("~/r-programming-assignments/STL_Enforcement_Master.csv", row.names = NULL)
+
+colnames(df_raw) <- c("Metric", "Total", "White", "Black", "Hispanic", "Native", "Asian", "Other")
+
+# 1. Filter for a wider range of variables
+# Added 'Resist Arrest', 'Weapon', and 'Drug Violation'
+metrics <- df_raw[df_raw$Metric %in% c("Stop rate", "Search rate", "Resist Arrest", "Weapon", "Drug Violation", "Contraband hit rate"), ]
+
+# 2. Flip it (Transposing)
+df_plot <- as.data.frame(t(metrics[,-1]))
+colnames(df_plot) <- metrics$Metric
+
+# 3. Clean and Save (Do this BEFORE the plot)
+df_plot <- df_plot %>% 
+    mutate(across(everything(), ~as.numeric(as.character(.))))
+df_plot$Race <- rownames(df_plot)
+
+#Focus on demographic disparity
+df_plot <- df_plot %>% filter(Race != "Total")
+
+# Save the multi-variable data for the assignment/blog
+write.csv(df_plot, "Flipped_Enforcement_Data_RProgramming.csv", row.names = FALSE)
+
+```
+Plotting the data used to create our new csv file
+```{r pressure, echo=FALSE}
+ggplot(df_plot, aes(x = `Search rate`, y = `Contraband hit rate`, color = Race, size = `Stop rate`)) +
+  #Set point transparency to 0.8 to manage overlap (Balance)
+  geom_point(alpha = 0.8) +
+  #Place race labels near points for immediate identification (Proximity)
+  geom_text(aes(label = Race), vjust = -1.5, fontface = "bold", size = 4, show.legend = FALSE) + 
+  #Ensure the Y-axis has breathing room for labels (Balance)
+  scale_y_continuous(expand = expansion(mult = c(0.05, 0.2)))+
+  #Use Set1 palette for maximum color differentiation (Contrast)
+  scale_color_brewer(palette = "Dark2") + 
+  #Clean title; subtitle removed for simplicity (Simplicity/Alignment)  
+  labs(title = "Missouri Enforcement Paradox: Contraband Found",
+       x = "Search Rate (%)", y = "Contraband Hit Rate (%)") +
+  #Use a minimal theme to remove visual clutter (Balance)
+  theme_minimal()
+
+ggplot(df_plot, aes(x = `Search rate`, y = `Resist Arrest`, color = Race, size = `Stop rate`)) +
+  geom_point(alpha = 0.8) +
+  geom_text(aes(label = Race), vjust = -1.5, fontface = "bold") + 
+  scale_y_continuous(expand = expansion(mult = c(0.05, 0.2)))+
+  scale_color_brewer(palette = "Dark2") + 
+  labs(title = "Missouri Enforcement Paradox: Resisting Arrest",
+       x = "Search Rate (%)", y = "Resisting Arrest Rate (count)") +
+  theme_minimal()
+
+ggplot(df_plot, aes(x = `Search rate`, y = `Weapon`, color = Race, size = `Stop rate`)) +
+  geom_point(alpha = 0.8) +
+  geom_text(aes(label = Race), vjust = -1.5, fontface = "bold", size = 4, show.legend = FALSE) + 
+  scale_y_continuous(expand = expansion(mult = c(0.05, 0.2)))+
+  scale_color_brewer(palette = "Dark2") + 
+  labs(title = "Missouri Enforcement Paradox: Illegal Weapons",
+       x = "Search Rate (%)", y = "Weapon Rate (count)") +
+  theme_minimal()
+
+```
+
+https://rstue.blogspot.com/2026/03/module-9-multivariate-visualizations.html

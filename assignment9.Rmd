@@ -1,0 +1,63 @@
+---
+title: "Assignment9Lattice"
+author: "Vashay Carpenter"
+date: "`r Sys.Date()`"
+output: html_document
+---
+# --- MODULE 9: THE GRAPHICS TRIAD ---
+
+```{r setup, include=FALSE}
+#install.packages("lattice")
+#install.packages("ggplot2")
+
+library(lattice)
+library(ggplot2)
+
+```
+
+
+
+```{r cars}
+# Load Dataset
+data(mtcars)
+# Ensure legends and facets show "V-Engine" instead of "0" across ALL plots.
+mtcars$vs <- factor(mtcars$vs, labels = c("V-Engine", "Straight-Engine"))
+```
+
+
+
+```{r pressure, echo=FALSE}
+#1. BASE R:
+# Low control, high speed. The "Quick Audit."
+plot(mtcars$hp, mtcars$mpg, 
+     col = mtcars$vs, pch = 19,
+     main = "Base R: HP vs MPG",
+     xlab = "Horsepower", ylab = "Miles Per Gallon")
+legend("topright", legend = levels(mtcars$vs), col = 1:2, pch = 19)
+
+hist(mtcars$mpg, breaks = 10, col = "lightgray", 
+     main = "Base: Distribution of MPG", xlab = "MPG")
+
+#2.  LATTICE:
+# Strength: Trellis graphics and small multiples. 
+xyplot(mpg ~ hp | vs, data = mtcars,
+       main = "Lattice: Conditioned HP vs MPG",
+       type = c("p", "r"), # Points and Regression line
+       xlab = "Horsepower", ylab = "Miles Per Gallon")
+
+
+#3.  GGPLOT2:
+ggplot(mtcars, aes(x = hp, y = mpg, color = vs)) +
+  # Map 'size' ONLY to points to prevent geom_smooth from dropping it
+  geom_point(aes(size = wt), alpha = 0.7) +
+  # Use linewidth=1 to fix the deprecation warning
+  geom_smooth(method = "lm", se = FALSE, linewidth = 1) +
+  scale_color_brewer(palette = "Dark2") +
+  labs(title = "ggplot2: Multivariate Efficiency Paradox",
+       subtitle = "Horsepower vs MPG (Size = Vehicle Weight)",
+       x = "Horsepower", y = "Miles Per Gallon",
+       size = "Weight (1000 lbs)", color = "Engine Type") +
+  theme_minimal()
+
+```
+
