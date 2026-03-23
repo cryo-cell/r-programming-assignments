@@ -14,7 +14,7 @@ Step 1
 ```{r}
 # Read file from computer via prompt
 # Use sep="," to correctly parse the columns
-Student <- read.table("C:/Users/cruos/Downloads/Assignment6.txt", header = TRUE, sep = ",")
+Student <- read.table(file.choose(), header = TRUE, sep = ",")
 
 View(Student)
 # Run "mean" using Sex as the category via plyr

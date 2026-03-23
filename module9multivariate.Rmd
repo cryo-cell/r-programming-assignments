@@ -1,0 +1,108 @@
+---
+title: "Module 9 Multivariate"
+author: "Vashay Carpenter"
+date: "`r Sys.Date()`"
+output: html_documentt
+---
+First we will install our packages
+```{r setup, include=FALSE}
+#install.packages("pdftools") 
+#install.packages("stringr") required to use str_split
+#install.packages("ggplot2")
+#install.packages("tidyverse")
+#install.packages("corrgram")
+library(stringr)
+library(pdftools)
+library(ggplot2)
+library(tidyverse)
+library(corrgram)
+
+```
+Next we will get the data from the PDF file containing the 2024 Annual State Report of arrests for Missouri and format it into a csv
+```{r cars}
+#Let's create a var for the raw text from the pdf
+raw_text <- pdf_text("C:/Users/cruos/Downloads/2024-Annual-State-Report-1.pdf")
+#Create lines using unlist; str_split from the stringr package
+lines <- unlist(str_split(raw_text, "\n"))
+
+#Select the rows for each table starting using their line numbers; avoiding repeated column names and empty lines
+table1 <- lines[29:48]
+table2 <- lines[312:363]
+table3 <- lines[374:397]
+
+table1
+#Combine the lines of each table
+all_data <- c(table1, table2, table3)
+
+# This creates the 8th column needed to stop the "Left Shift" in Excel.
+all_data[1] <- paste0("Metric ", all_data[1])
+
+#This var breaks the pattern utilized by all others by inserting a comma so we will replace it; avoiding duplicate row.names and comma induced errors
+all_data <- str_replace_all(all_data, "Stop rate, residents", "Resident_stop_rate") 
+
+#Replace all empty spaces with commas after removing the whitespace from the beginning and the ned of the document using str_trim
+clean_csv <- str_replace_all(str_trim(all_data), "\\s{2,}", ",")
+
+#Our final variable for creating our csv
+clean_csv
+
+#Create our final csv representing all scraped and cleaned data
+writeLines(clean_csv, "STL_Enforcement_Master.csv")
+
+```
+Now we will transpose and plot the data available in our newlsy created csv
+```{r pressure, echo=FALSE}
+#Read the newly created CSV back into R as a data frame
+df_raw <- read.csv("STL_Enforcement_Master.csv", row.names = NULL)
+
+#Assign standard racial and metric headers to the data frame
+colnames(df_raw) <- c("Metric", "Total", "White", "Black", "Hispanic", "Native", "Asian", "Other")
+
+#Filter for specific multivariate metrics: Stop, Search, Hit, and Arrest rates
+metrics <- df_raw[df_raw$Metric %in% c("Stop rate", "Search rate", "Contraband hit rate", "Arrest rate"), ]
+
+#Transpose the data frame so metrics are columns and races are rowst
+df_plot <- as.data.frame(t(metrics[,-1]))
+
+#Restore the metric names as column headers
+colnames(df_plot) <- metrics$Metric
+
+#Convert character values to numeric to enable mathematical plotting 
+df_plot <- df_plot %>% 
+  mutate(across(everything(), ~as.numeric(as.character(.))))
+
+#Capture the race names from the row identifiers into a new column
+df_plot$Race <- rownames(df_plot)
+
+#Focus on demographic disparity
+df_plot <- df_plot %>% filter(Race != "Total")
+
+write.csv(df_plot, "Flipped_Enforcement_Data.csv", row.names = FALSE)
+
+
+# Create plot: X=Search, Y=Hit Rate, Color=Race (Contrast), Size=Stop Rate (Hierarchy)
+ggplot(df_plot, aes(x = `Search rate`, y = `Contraband hit rate`, color = Race, size = `Stop rate`)) +
+  #Set point transparency to 0.8 to manage overlap (Balance)
+  geom_point(alpha = 0.8) +
+  #Place race labels near points for immediate identification (Proximity)
+  geom_text(aes(label = Race), vjust = -1.5, fontface = "bold", size = 4, show.legend = FALSE) + 
+  #Ensure the Y-axis has breathing room for labels (Balance)
+  scale_y_continuous(expand = expansion(mult = c(0.05, 0.2)))+
+  #Use Set1 palette for maximum color differentiation (Contrast)
+  scale_color_brewer(palette = "Dark2") + 
+  #Clean title; subtitle removed for simplicity (Simplicity/Alignment)  
+  labs(title = "Missouri Enforcement Paradox",
+       x = "Search Rate (%)", y = "Contraband Hit Rate (%)") +
+  #Use a minimal theme to remove visual clutter (Balance)
+  theme_minimal() 
+
+
+corrgram(df_plot[,1:4], order=TRUE, 
+         lower.panel=panel.shade, 
+         upper.panel=panel.pie, 
+         text.panel=panel.txt,
+         main="Multivariate Correlation: Enforcement Paradox")
+
+```
+
+Blog Link: https://rstue.blogspot.com/2026/03/module-9-multivariate-visualizations.html 
