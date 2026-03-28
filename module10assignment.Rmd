@@ -1,0 +1,96 @@
+---
+title: 'Module #10 Hot Dogs'
+author: "VaShay Carpenter"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+#Hotdogs Setup
+hotdogs <- read.csv("http://datasets.flowingdata.com/hot-dog-contest-winners.csv")
+colnames(hotdogs) <- c("Year", "Winner", "Eaten", "Country", "Record")
+head(hotdogs)
+
+#Hotdog_places barplot Setup
+hotdog_places <- read_csv("http://datasets.flowingdata.com/hot-dog-places.csv")
+hotdog_places <- as.matrix(hotdog_places) # Rename the columns to correspond to the years 2000-2010
+colnames(hotdog_places) <- lapply(2000:2010, as.character)
+
+
+#Econimics setup
+head(economics)
+
+year <- function(x) as.POSIXlt(x)$year + 1900
+economics$year <- year(economics$date) # we setting up our analysis
+head(economics)
+
+#Our Weather ggplot2 setup
+# 1. Pulling Data about Weather
+weather_url <- "https://raw.githubusercontent.com/vega/vega/master/docs/data/seattle-weather.csv" 
+
+df <- read.csv(weather_url)
+
+df$date <- as.Date(df$date)
+
+df
+
+
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r cars}
+library("ggplot2")
+library("gridExtra")
+library("tidyverse")
+
+#Hotdog: Barplot 
+colors <- ifelse(hotdogs$Record == 1, "darkred", "grey")
+barplot(hotdogs$Eaten, names.arg = hotdogs$Year, col=colors, border=NA,
+main = "Nathan's Hot Dog Eating Contest Results, 1980-2010",  xlab="Year", ylab="Hot dogs and buns (HDBs) eaten")
+
+#Hotdog: ggplot2
+ggplot(hotdogs) + geom_bar(aes(x=Year, y=Eaten, fill=factor(Record)), stat="identity") + labs(title="Nathan's Hot Dog Eating Contest Results, 1980-2010", fill="New Record") + xlab("Year") + ylab("Hot dogs and buns (HDBs) eaten")
+
+#Hotdog_places: Stacked Barplot
+barplot(hotdog_places, border=NA, main="Hot Dog Eating Contest Results, 1980-2010", xlab="Year", ylab="Hot dogs and buns (HDBs) eaten")
+
+#Qplots
+plot1 <- qplot(date, unemploy / pop, data = economics, geom = "line")
+plot1
+
+plot2 <- qplot(date, uempmed, data = economics, geom = "line")
+grid.arrange(plot1, plot2, ncol=2)
+plot1 <- qplot(unemploy/pop, uempmed, data = economics, geom = c("point", "path"))
+plot2 <- qplot(unemploy/pop, uempmed, data = economics, geom = c("point", "path"), color=year)
+grid.arrange(plot1, plot2, ncol=2)
+plot2
+
+#Our Weather ggplot2 visualizations
+
+# 2. Visualize the Weather Windows for Maximum and Minimum Temperatures in the first 60 entries of time series (Time Series of Temp Max vs Min)
+ggplot(df[1:60, ], aes(x = date)) +
+  geom_ribbon(aes(ymin = temp_min, ymax = temp_max), fill = "steelblue", alpha = 0.3) +
+  geom_line(aes(y = temp_max, color = "Daytime Peak"), size = 1) +
+  geom_line(aes(y = temp_min, color = "Nighttime Floor"), size = 1) +
+  theme_minimal() +
+  scale_color_manual(values = c("Daytime Peak" = "darkred", "Nighttime Floor" = "blue")) +
+  labs(title = "Time Series: Thermal Variance & Survival Windows",
+       x = "Deployment Date",
+       y = "Temperature (C)",
+       color = "Thermal Limit")
+
+# 3. The Precipitation (Bar + Line Overlay)
+ggplot(df[1:60, ], aes(x = date)) +
+  geom_bar(aes(y = precipitation * 10), stat = "identity", fill = "grey", alpha = 0.5) +
+  geom_line(aes(y = wind), color = "orange", size = 1) +
+  theme_minimal() +
+  labs(title = "Environmental Friction: Wind vs. Precipitation",
+       x = "Date",
+       y = "Wind Speed (m/s) / Precip (Scaled)")
+```
+
