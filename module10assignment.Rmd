@@ -93,4 +93,4 @@ ggplot(df[1:60, ], aes(x = date)) +
        x = "Date",
        y = "Wind Speed (m/s) / Precip (Scaled)")
 ```
-
+Blog Link: https://sizzleyezation.blogspot.com/2026/03/time-series-analysis-from-competitive.html 
