@@ -1,0 +1,13 @@
+Package: Friedman
+Type: Package
+Title: Tactical Environmental and Thermal Analysis Tools
+Version: 0.0.0.9000
+Date: 2026-03-28
+Author: person("VaShay", "Carpenter", email = "vcarpenter@usf.edu", role = c("aut", "cre"))
+Maintainer: Who to complain to <yourfault@somewhere.net>
+Description: This package provides tools for calculating the 'Thermal Envelope'and 'Environmental Friction' index. Designed for field researchers to optimize gear selection based on time series weather data.
+Depends: R (>= 3.1.2)
+Imports: ggplot2, dplyr, tidyr, gridExtra
+License: CC0
+Encoding: UTF-8
+LazyData: true

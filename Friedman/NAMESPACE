@@ -1,0 +1,7 @@
+export("all_data", "assignment2", "base_layer", "bottoms", "bplot", "clean_csv", "clean_hum", "clean_temp", "colors",
+       "current_cond", "current_temp", "delta", "dewpoint", "dewpoint_raw", "df", "df_plot", "df_raw", "economics",
+       "feels_like", "feels_like_raw", "gloves", "history", "hotdog_places", "hotdogs", "humidity", "humidity_raw",
+       "last_pres", "lines", "main_csv", "metrics", "mid_layer", "mtcars", "myMean", "outer_layer", "page", "plot1", "plot2",
+       "presha", "pressure", "pressure_raw", "pressure_trend", "raw_text", "sess", "socks", "table1", "table2", "table3",
+       "temp", "temp_raw", "underwear", "url", "visibility", "visibility_raw", "weather_json", "weather_list", "weather_url",
+       "wind", "wind_chill", "wind_chill_raw", "wind_speed", "wind_speed_raw", "year")
