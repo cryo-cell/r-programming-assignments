@@ -109,5 +109,5 @@ The corrected code and its successful output.
 
 Any additional defensive checks you added.
 
-Blog Link: https://www.blogger.com/blog/post/edit/1889291094899577211/2058382356451000126?hl=en
+Blog Link: https://rstue.blogspot.com/2026/04/assignment-11-debugging-and-defensive.html
 
