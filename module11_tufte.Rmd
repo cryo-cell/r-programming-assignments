@@ -1,0 +1,82 @@
+---
+title: "Module 11 Tufte"
+author: "VaShay Carpenter"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+1. Install the following packages
+In order to run those visualization, you need to install the following packages:
+```{r setup, include=FALSE}
+#install.packages(c("CarletonStats", "epanetReader", "fmsb", "ggplot2", "ggthemes","latticeExtra", "MASS", "PerformanceAnalytics", "psych", "plyr", "prettyR", "plotrix","proto", "RCurl", "reshape", "reshape2"))
+
+#2. Run those packages in the background
+#Then, the second step is to make sure those packages are running in the background
+pkg_list <- c("CarletonStats", "epanetReader", "fmsb", 
+              "ggplot2", "ggthemes", "latticeExtra", "MASS", 
+              "PerformanceAnalytics", "psych", "plyr", "prettyR", 
+              "plotrix", "proto", "RCurl", "reshape", "reshape2")
+
+lapply(pkg_list, library, character.only = TRUE)
+
+#3. Warning and conflict with your current RStudio version: RStudio might come back and state that this particular package has a conflict with your current R version you install. You will then need to change your choice because your current version does not support the package infrastructure.  
+
+ 
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r cars}
+#4. The code
+
+x <- 1967:1977
+y <- c(0.5,1.8,4.6,5.3,5.3,5.7,5.4,5,5.5,6,5)
+pdf(width=10, height=6)
+plot(y ~ x, axes=F, xlab="", ylab="", pch=16, type="b")
+axis(1, at=x, label=x, tick=F, family="serif")
+axis(2, at=seq(1,6,1), label=sprintf("$%s", seq(300,400,20)), tick=F, las=2, family="serif")
+abline(h=6,lty=2)
+abline(h=5,lty=2)
+text(max(x), min(y)*2.5,"Per capita\nbudget expanditures\nin constant dollars", adj=1, 
+     family="serif")
+text(max(x), max(y)/1.08, labels="5%", family="serif")
+dev.off()
+
+```
+
+## Including Plots
+
+Your Plot
+```{r pressure, echo=FALSE}
+
+#Load airquality dataset
+data(airquality)
+#Remove NA values
+df <- na.omit(airquality)
+#Plot the Temp vs Ozone using Dr. Piwek's example of dot-dash in ggplot2
+ggplot(df, aes(Temp, Ozone)) + 
+  geom_point() + 
+  geom_rug() + 
+  theme_tufte(ticks=F) + 
+  xlab("Temperature (F)") + ylab("Ozone") + 
+  theme(axis.title.x = element_text(vjust=-0.5), axis.title.y = element_text(vjust=1))
+
+x <- 1967:1977
+y <- c(0.5,1.8,4.6,5.3,5.3,5.7,5.4,5,5.5,6,5)
+
+df_tufte <- data.frame(Year = x, Budget = y)
+
+ggplot(df_tufte, aes(Year, Budget)) + 
+  geom_point() + 
+  geom_rug() + 
+  theme_tufte(ticks=F) + 
+  xlab("Year") + ylab("Budget") + 
+  theme(axis.title.x = element_text(vjust=-0.5), axis.title.y = element_text(vjust=1))
+
+
+```
+

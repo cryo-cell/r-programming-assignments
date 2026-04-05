@@ -1,0 +1,111 @@
+---
+title: "Module 11 Debug"
+author: "VaShay Carpenter"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+Below is a function intended to flag rows of a numeric matrix x that are outliers in every column according to the Tukey rule. The function contains a deliberate bug. A helper function for detecting Tukey outliers is provided first so that you can focus on debugging the logical error in the main function.
+
+```{r setup, include=FALSE}
+turkey.outlier <- function(x, k = 1.5) {
+  q1 <- quantile(x, 0.25, na.rm = TRUE)
+  q3 <- quantile(x, 0.75, na.rm = TRUE)
+  iqr <- q3 - q1
+  x < (q1 - k * iqr) | x > (q3 + k * iqr)
+}
+
+turkey_multiple <- function(x) {
+  outliers <- array(TRUE, dim = dim(x))
+  for (j in 1:ncol(x)) {
+    outliers[, j] <- outliers[, j] && turkey.outlier(x[, j])
+  }
+  outlier.vec <- vector("logical", length = nrow(x))
+  for (i in 1:nrow(x)) {
+    outlier.vec[i] <- all(outliers[i, ])
+  }
+  return(outlier.vec)
+}
+```
+
+Reproduce the Error
+In R, create a test matrix and run the function:
+```{r cars}
+set.seed(123)
+test_mat <- matrix(rnorm(50), nrow = 10)
+turkey_multiple(test_mat)
+
+#Capture the exact error message or warning message you see.
+```
+
+Diagnose the Bug
+Explain why using && inside the loop is incorrect. Recall that && evaluates only the first element of a logical vector, whereas this task requires element-wise comparison across all rows.
+
+{}
+
+Fix the Code
+Edit the function so that the logical operation is applied element-wise. Replace the buggy line with:
+
+outliers[, j] <- outliers[, j] & tukey.outlier(x[, j])
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Validate Your Fix
+Re-run your corrected function on test_mat and verify that it returns a logical vector of length 10 without error:
+
+```{r}
+corrected_tukey <- function(x) {
+  outliers <- array(TRUE, dim = dim(x))
+  for (j in seq_len(ncol(x))) {
+    outliers[, j] <- outliers[, j] & tukey.outlier(x[, j])
+  }
+  outlier.vec <- logical(nrow(x))
+  for (i in seq_len(nrow(x))) {
+    outlier.vec[i] <- all(outliers[i, ])
+  }
+  outlier.vec
+}
+
+corrected_tukey(test_mat)
+
+```
+Defensive Enhancements (Optional)
+Add checks at the top of your function to:
+Ensure that x is a matrix.
+Ensure that x is numeric.
+Provide informative errors if assumptions are not met.
+Example:
+
+```{}
+corrected_tukey <- function(x) {
+  if (!is.matrix(x)) {
+    stop("x must be a matrix.")
+  }
+  if (!is.numeric(x)) {
+    stop("x must be a numeric matrix.")
+  }
+
+  outliers <- array(TRUE, dim = dim(x))
+  for (j in seq_len(ncol(x))) {
+    outliers[, j] <- outliers[, j] & tukey.outlier(x[, j])
+  }
+
+  outlier.vec <- logical(nrow(x))
+  for (i in seq_len(nrow(x))) {
+    outlier.vec[i] <- all(outliers[i, ])
+  }
+
+  outlier.vec
+}
+```
+Document Your Debugging Workflow
+On your blog, include:
+The original error or warning message.
+
+Your diagnosis of the bug and why the code was wrong.
+
+The corrected code and its successful output.
+
+Any additional defensive checks you added.
