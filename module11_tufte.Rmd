@@ -80,4 +80,4 @@ ggplot(df_tufte, aes(Year, Budget)) +
 
 ```
 
-Blog Link: https://github.com/cryo-cell/r-programming-assignments/blob/main/module11_tufte.Rmd
+Blog Link: https://rstue.blogspot.com/2026/04/assignment-11-debugging-and-defensive.html
