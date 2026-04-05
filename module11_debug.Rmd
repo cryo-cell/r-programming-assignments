@@ -15,25 +15,26 @@ turkey.outlier <- function(x, k = 1.5) {
   x < (q1 - k * iqr) | x > (q3 + k * iqr)
 }
 
-turkey_multiple <- function(x) {
-  outliers <- array(TRUE, dim = dim(x))
-  for (j in 1:ncol(x)) {
-    outliers[, j] <- outliers[, j] && turkey.outlier(x[, j])
-  }
-  outlier.vec <- vector("logical", length = nrow(x))
-  for (i in 1:nrow(x)) {
-    outlier.vec[i] <- all(outliers[i, ])
-  }
-  return(outlier.vec)
-}
+#turkey_multiple <- function(x) {
+#  outliers <- array(TRUE, dim = dim(x))
+#  for (j in 1:ncol(x)) {
+#    outliers[, j] <- outliers[, j] && turkey.outlier(x[, j])
+#  }
+#  outlier.vec <- vector("logical", length = nrow(x))
+#  for (i in 1:nrow(x)) {
+#    outlier.vec[i] <- all(outliers[i, ])
+#  }
+#  return(outlier.vec)
+#}
+
 ```
 
 Reproduce the Error
 In R, create a test matrix and run the function:
 ```{r cars}
-set.seed(123)
-test_mat <- matrix(rnorm(50), nrow = 10)
-turkey_multiple(test_mat)
+#set.seed(123)
+#test_mat <- matrix(rnorm(50), nrow = 10)
+#turkey_multiple(test_mat)
 
 #Capture the exact error message or warning message you see.
 ```
@@ -48,9 +49,6 @@ Edit the function so that the logical operation is applied element-wise. Replace
 
 outliers[, j] <- outliers[, j] & tukey.outlier(x[, j])
 
-```{r pressure, echo=FALSE}
-plot(pressure)
-```
 
 Validate Your Fix
 Re-run your corrected function on test_mat and verify that it returns a logical vector of length 10 without error:
@@ -59,7 +57,7 @@ Re-run your corrected function on test_mat and verify that it returns a logical 
 corrected_tukey <- function(x) {
   outliers <- array(TRUE, dim = dim(x))
   for (j in seq_len(ncol(x))) {
-    outliers[, j] <- outliers[, j] & tukey.outlier(x[, j])
+    outliers[, j] <- outliers[, j] & turkey.outlier(x[, j])
   }
   outlier.vec <- logical(nrow(x))
   for (i in seq_len(nrow(x))) {
@@ -78,7 +76,7 @@ Ensure that x is numeric.
 Provide informative errors if assumptions are not met.
 Example:
 
-```{}
+```{r}
 corrected_tukey <- function(x) {
   if (!is.matrix(x)) {
     stop("x must be a matrix.")
@@ -99,6 +97,7 @@ corrected_tukey <- function(x) {
 
   outlier.vec
 }
+
 ```
 Document Your Debugging Workflow
 On your blog, include:
@@ -109,3 +108,6 @@ Your diagnosis of the bug and why the code was wrong.
 The corrected code and its successful output.
 
 Any additional defensive checks you added.
+
+Blog Link: https://www.blogger.com/blog/post/edit/1889291094899577211/2058382356451000126?hl=en
+
