@@ -40,3 +40,5 @@ network_plot = (
 print(network_plot)
 
 network_plot.save("social_network_plot.png")
+
+#Blog Link: https://sizzleyezation.blogspot.com/2026/04/module-12-python-with-networkx-and.html
