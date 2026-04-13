@@ -80,4 +80,4 @@ ggplot(mpg, aes(x=class, y=hwy, fill=class)) +
 
 Using R Markdown is significantly more efficient than writing plain reports. In a plain report, if the data changes, I have to manually update every table and plot. With R Markdown, I simply "Knit" the document again, and every visualization and statistic updates automatically. This ensures accuracy and reproducibility in my library science audits.
 
-Blog Link: 
+Blog Link: https://rstue.blogspot.com/2026/04/assignment-12-r-markdown.html 
