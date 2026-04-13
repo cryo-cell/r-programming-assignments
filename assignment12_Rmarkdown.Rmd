@@ -1,0 +1,83 @@
+---
+title: "My R Markdown Primer"
+author: "VaShay Carpenter"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+Create an R Markdown File
+In RStudio, go to File → New File → R Markdown… and choose HTML output.
+Give it a title (e.g., “My R Markdown Primer”) and author metadata.
+
+Populate the Document
+Write sections that include:
+
+A brief introduction explaining what R Markdown is.
+
+# R Markdown is a file format for making dynamic documents with R. An R Markdown document is written in markdown (an easy-to-write plain text format) 
+
+- *italics*
+- **bold**
+- `code`
+-[links](https://rmarkdown.rstudio.com)
+
+- *Latex Equations*, $E = mc^{2}$
+
+
+At least one narrative paragraph (Markdown text).
+
+At least one LaTeX math expression (e.g., inline $\\alpha + \\beta = \\gamma$ and a displayed equation).
+
+At least two executable R code chunks that:
+Load a library or dataset.
+Run a simple analysis or generate a plot (e.g., summary statistics or ggplot2 chart).
+
+A concluding reflection on your experience using R Markdown vs. writing plain reports.
+
+Compile and Review
+Knit the document to HTML (or PDF) and save the output.
+Compare the source .Rmd file side‑by‑side with the rendered output.
+Note any formatting surprises or tips you discovered.
+
+Submission Instructions
+GitHub:
+Push your .Rmd source file and the rendered HTML (or PDF) to your GitHub repository.
+Blog Post:
+Write a short reflection on your blog about:
+What you learned about Markdown syntax and LaTeX math.
+How code chunks and narrative sections integrate.
+Any challenges you faced in authoring or knitting.
+
+Include a link to your GitHub repository in the blog post.
+
+Canvas: Submit the URLs for your GitHub repo and blog post under “Assignment #12.”
+
+# First executable R code chunk:
+```{r load-data, message=FALSE}
+#Load a dataset and library
+library(ggplot2)
+data("mpg")
+```
+# Second executable R code chunk:
+```{r analysis,message=FALSE}
+#Simple analysis
+summary(mpg$hwy)
+
+#Generate a ggplot2 chart
+ggplot(mpg, aes(x=class, y=hwy, fill=class)) +
+  geom_boxplot() +
+  theme_minimal() +
+  labs(title="Highway MPG by Vehicle Class", x="Class", y="MPG")
+```
+
+# Concluding reflection on experience using R Markdown vs. writing plain reports.
+
+Using R Markdown is significantly more efficient than writing plain reports. In a plain report, if the data changes, I have to manually update every table and plot. With R Markdown, I simply "Knit" the document again, and every visualization and statistic updates automatically. This ensures accuracy and reproducibility in my library science audits.
+
+Blog Link: 
