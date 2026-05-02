@@ -48,7 +48,7 @@ outfit <- city_outfit("Largo")
     ## [ C-SHELL TACTICAL REPORT ]
     ## --------------------------------------------
     ## LOC: Largo, Florida | COORDS: 27.91829, -82.774936
-    ## WEATHER: 72F | HUM: 97% | PRECIP: 70%
+    ## WEATHER: 72F | HUM: 97% | PRECIP: 50%
     ## SKY:  LIGHT RAIN | RAIN: TRUE | SUNNY: FALSE
     ## --------------------------------------------
     ## Socks           >> Short Socks
@@ -74,17 +74,17 @@ print(outfit)
     ## 
     ## $Weather
     ##   night
-    ## 1 FALSE
-    ##                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          text
-    ## 1 showers likely and possibly a thunderstorm. some of the storms could be severe.  cloudy, with a steady temperature around 79. breezy, with a west wind around 15 mph, with gusts as high as 22 mph.  chance of precipitation is 70%. new rainfall amounts of less than a tenth of an inch, except higher amounts possible in thunderstorms.  a chance of showers and thunderstorms before 11pm, then a slight chance of showers and thunderstorms after 2am. some of the storms could be severe.  mostly cloudy, with a low around 63. west wind 8 to 10 mph becoming north after midnight.  chance of precipitation is 50%. new rainfall amounts between a tenth and quarter of an inch, except higher amounts possible in thunderstorms. 
+    ## 1  TRUE
+    ##                                                                                                                                                                                                                                                                                                                                                                                                                                           text
+    ## 1 a chance of showers and thunderstorms before 11pm, then a slight chance of showers and thunderstorms after 2am. some of the storms could be severe.  mostly cloudy, with a low around 63. west southwest wind 8 to 14 mph becoming north after midnight. winds could gust as high as 21 mph.  chance of precipitation is 50%. new rainfall amounts between a tenth and quarter of an inch, except higher amounts possible in thunderstorms. 
     ##   cityName temp precip   condition humidity wind    dewpoint is_sunny
-    ## 1    Largo   72     70  light rain      97%    0 71°F (22°C)    FALSE
+    ## 1    Largo   72     50  light rain      97%    0 71°F (22°C)    FALSE
     ##   is_rain_likely
     ## 1           TRUE
     ##                                                              source_url
     ## 1 https://forecast.weather.gov/MapClick.php?lat=27.91829&lon=-82.774936
     ##           scrape_time
-    ## 1 2026-05-02 17:46:46
+    ## 1 2026-05-02 18:37:51
     ## 
     ## $Outfit
     ## $Outfit$Socks
@@ -127,3 +127,42 @@ and data-raw processing, please refer to the package vignette:
 ``` r
 vignette("CShell-Tactical-Guide", package = "CShell")
 ```
+
+AI COLLABORATION LOG: CSHELL PROJECT
+
+1.  ARCHITECTURAL DESIGN (STRATEGY) AI Role: Architectural Consultant.
+
+Execution: Used Gemini to refactor legacy R scripts into a hardened S3
+package structure. AI assisted in determining the optimal placement for
+internal data logic within data-raw/ and sysdata.rda to ensure data
+sovereignty.
+
+2.  LOGIC GATE ENGINEERING (DISCRETE MATH) AI Role: Logic Validator.
+
+Execution: AI was used to verify the boolean logic for wardrobe
+recommendations. We mapped NWS telemetry variables (temperature,
+precipitation, wind) to series (AND) and parallel (OR) circuits to
+ensure logical consistency in the apply_wardrobe_logic function.
+
+3.  SCRAPER OPTIMIZATION (ETL) AI Role: Debugging & Refinement.
+
+Execution: Collaborated with AI to implement a “Tonight-Anchor”
+algorithm using rvest. AI helped troubleshoot timezone offset errors and
+optimized the regex for cleaning NWS telemetry strings.
+
+4.  DOCUMENTATION & UX AI Role: Technical Writer.
+
+Execution: Used AI to generate roxygen2 skeletons and ensure the
+CShell-Tactical-Guide vignette met professional standards. AI assisted
+in integrating cli and crayon for high-visibility terminal output.
+
+The AI’s suggestions to use @import for entire libraries (e.g., rvest,
+cli) in the NAMESPACE were rejected in favor of explicit namespacing
+(e.g., cli::cli_alert_info(), rvest::read_html()) to improve code
+legibility for peer review, prevent namespace conflicts, and make
+package dependencies more transparent.
+
+Suggestions to keep wardrobe logic in an external CSV or JSON file were
+rejected in favor of moving the logic into sysdata.rda within the data/
+directory to secure the business logic of the package, preventing
+external tampering and ensuring the package remains self-contained.

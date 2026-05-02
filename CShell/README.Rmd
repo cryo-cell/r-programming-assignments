@@ -4,9 +4,6 @@ output: github_document
 
 # CShell
 
-<!-- badges: start -->
-<!-- badges: end -->
-
 **CShell** is a tactical weather telemetry and logistical engine built in R. It automates the extraction of National Weather Service (NWS) data and processes it through an internal logic-gate system to provide real-time wardrobe and equipment recommendations.
 
 ## Technical Identity
@@ -29,7 +26,6 @@ This is a basic example which shows you how to solve use the CShell package:
 
 ```{r example}
 library(CShell)
-## basic example code
 
 # Execute the core engine for a specific node
 weather <- scrape_nws("Largo", 27.91, -82.79)
@@ -44,3 +40,28 @@ For a full tactical breakdown of the logic engine and data-raw processing, pleas
 ```{r eval=FALSE}
 vignette("CShell-Tactical-Guide", package = "CShell")
 ```
+AI COLLABORATION LOG: CSHELL PROJECT
+
+1. ARCHITECTURAL DESIGN (STRATEGY)
+AI Role: Architectural Consultant.
+
+Execution: Used Gemini to refactor legacy R scripts into a hardened S3 package structure. AI assisted in determining the optimal placement for internal data logic within data-raw/ and sysdata.rda to ensure data sovereignty.
+
+2. LOGIC GATE ENGINEERING (DISCRETE MATH)
+AI Role: Logic Validator.
+
+Execution: AI was used to verify the boolean logic for wardrobe recommendations. We mapped NWS telemetry variables (temperature, precipitation, wind) to series (AND) and parallel (OR) circuits to ensure logical consistency in the apply_wardrobe_logic function.
+
+3. SCRAPER OPTIMIZATION (ETL)
+AI Role: Debugging & Refinement.
+
+Execution: Collaborated with AI to implement a "Tonight-Anchor" algorithm using rvest. AI helped troubleshoot timezone offset errors and optimized the regex for cleaning NWS telemetry strings.
+
+4. DOCUMENTATION & UX
+AI Role: Technical Writer.
+
+Execution: Used AI to generate roxygen2 skeletons and ensure the CShell-Tactical-Guide vignette met professional standards. AI assisted in integrating cli and crayon for high-visibility terminal output.
+
+The AI's suggestions to use @import for entire libraries (e.g., rvest, cli) in the NAMESPACE were rejected in favor of explicit namespacing (e.g., cli::cli_alert_info(), rvest::read_html()) to improve code legibility for peer review, prevent namespace conflicts, and make package dependencies more transparent.
+
+Suggestions to keep wardrobe logic in an external CSV or JSON file were rejected in favor of moving the logic into sysdata.rda within the data/ directory to secure the business logic of the package, preventing external tampering and ensuring the package remains self-contained.
