@@ -6,6 +6,9 @@
 \usage{
 city_outfit(city)
 }
+\arguments{
+\item{city}{A character string representing the city name (e.g., "Tampa, FL", "Tampa").}
+}
 \description{
 Recommend by City Name (with State detection)
 }

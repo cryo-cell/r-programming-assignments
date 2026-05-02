@@ -1,9 +1,11 @@
 #' Recommend by City Name (with State detection)
+#' @param city A character string representing the city name (e.g., "Tampa, FL", "Tampa").
 #' @export
 
 city_outfit <- function(city) {
   # 1. GEO-LOCATE
-  geo_raw <- data.frame(city_input = city) %>%
+  city_input <- NULL
+  geo_raw <- data.frame(city_input = city) |>
     tidygeocoder::geocode(city_input, method = 'arcgis', full_results = TRUE, quiet = TRUE)
   
   if (is.na(geo_raw$lat)) stop("Node not found.")
@@ -25,8 +27,13 @@ city_outfit <- function(city) {
     Weather = weather,
     Outfit  = outfit
   )
+  # ASSIGN S3 CLASS
+  class(res) <- "outfit"
   
-  # 4. IMMEDIATE TELEMETRY REPORT 
+  # CREATE HYPERLINK
+  link_text <- cli::style_hyperlink("View Raw NWS Telemetry", res$Weather$source_url[1])
+  
+  # IMMEDIATE TELEMETRY REPORT 
   cat("\n[ C-SHELL TACTICAL REPORT ]\n")
   cat("--------------------------------------------\n")
   cat(sprintf("LOC: %s, %s | COORDS: %s, %s\n", res$Input, res$State, res$Coords[1], res$Coords[2]))
@@ -39,13 +46,16 @@ city_outfit <- function(city) {
   for (i in seq_along(active)) {
     cat(sprintf("%-15s >> %s\n", names(active)[i], active[i]))
   }
+  cat("SOURCE: ", link_text, "\n") # Accessing the URL from the Weather df
   cat("--------------------------------------------\n\n")
   
   # 5. SILENT RETURN (For variable assignment)
-  invisible(res)
+  return(invisible(res))
 }
 
 #' Recommend by Coordinates
+#' @param lat Numeric. The latitude of the target node.
+#' @param long Numeric. The longitude of the target node.
 #' @export
 coords_outfit <- function(lat, long) {
   # 1. GEO-LOCATE
@@ -71,8 +81,13 @@ coords_outfit <- function(lat, long) {
     Weather = weather,
     Outfit  = outfit
   )
+  # ASSIGN S3 CLASS
+  class(res) <- "outfit"
   
-  # 4. IMMEDIATE TELEMETRY REPORT 
+  # CREATE HYPERLINK
+  link_text <- cli::style_hyperlink("View Raw NWS Telemetry", res$Weather$source_url[1])
+  
+  # IMMEDIATE TELEMETRY REPORT 
   cat("\n[ C-SHELL TACTICAL REPORT ]\n")
   cat("--------------------------------------------\n")
   cat(sprintf("LOC: %s, %s | COORDS: %s, %s\n", res$Input, res$State, res$Coords[1], res$Coords[2]))
@@ -84,9 +99,10 @@ coords_outfit <- function(lat, long) {
   active <- items[items != "None"]
   for (i in seq_along(active)) {
     cat(sprintf("%-15s >> %s\n", names(active)[i], active[i]))
-  }
+  } 
+  cat("SOURCE: ", link_text, "\n")
   cat("--------------------------------------------\n\n")
   
   # 5. SILENT RETURN (For variable assignment)
-  invisible(res)
+  return(invisible(res))
 }

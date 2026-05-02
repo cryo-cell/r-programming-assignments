@@ -16,17 +16,17 @@ capitals_list <- data.frame(
 
 # 2. THE LOOP: Build the Master Dataframe
 # Note: Use a loop or purrr::map_df to ping all 50
-CShell_capitals <- capitals_list %>%
-  group_by(city) %>%
-  mutate(weather = list(scrape_nws(city, lat, lon))) %>%
+CShell_capitals <- capitals_list |>
+  group_by(city) |>
+  mutate(weather = list(scrape_nws(city, lat, lon))) |>
   tidyr::unnest(weather)
 
 # 3. SENSOR FAIL OVERRIDE
 # Drop any rows where critical data (temp, condition, or wind) is missing
-CShell_capitals <- CShell_capitals %>%
+CShell_capitals <- CShell_capitals |>
   filter(!is.na(temp), !is.na(condition), !is.na(wind))
 
-# 4. OPTIONAL: LOG THE DROPPED CITIES
+# 4. *OPTIONAL: LOG THE DROPPED CITIES
 dropped <- nrow(capitals_list) - nrow(CShell_capitals)
 if (dropped > 0) {
   message("[WARN] Sensors down for ", dropped, " locations. Purging from dataset.")

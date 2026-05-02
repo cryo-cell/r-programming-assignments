@@ -1,0 +1,57 @@
+---
+title: "CShell-Tactical-Guide"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{CShell-Tactical-Guide}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+# Operational Overview
+CShell is a biological optimization engine. Its primary objective is to maintain user homeostasis by removing the cognitive overhead of gear selection. It applies a hierarchical logic table to live environmental telemetry. The CShell package aims to simplify shell selection for even the most indecisive of mollusks. 
+
+# Core Usage
+To generate a tactical report for a specific location:
+```{r}
+library(CShell)
+city_outfit("Largo")
+```
+# Versatile implementation
+CShell supports both human-readable city inputs and raw geospatial coordinates for remote field operations.
+```{r}
+# Deployment by City Node
+report_city <- city_outfit("Boston")
+
+# Deployment by Precise Coordinates
+report_coord <- coords_outfit(lat = 27.91, long = -82.79)
+
+# Technical Verification
+# The output of CShell functions is a specialized S3 object of class `outfit`. 
+
+# Verification of S3 Class Usage
+class(report_city)
+
+# This allows for clean reporting while maintaining raw data accessibility.
+
+# Access National Weather Service report link inside the object
+report_city$Weather$source_url
+
+# Access Suggested Outfit for Tactical Report
+report_city$Outfit
+```
+**Internal Architecture & S3 Classes**
+CShell utilizes S3 Classes to manage data output. When a function is called, it returns an object of class outfit. This allows for standardized data handling while providing a high-visibility telemetry report in the console.
+
+**Future Proofing: API Integration**
+The current version of CShell utilizes a web-scraping engine (scrape_nws) to pull data from the National Weather Service.
+
+**For Contributors:**
+The engine.R file is architected to be modular. While scraping is functional for the current module, future iterations should transition to a REST API (e.g., OpenWeather). To contribute:
+
+Replace the scrape_nws logic with an API call.
+
+Ensure the output dataframe maintains the existing column schema (temp, humidity, precip).
+
+The apply_wardrobe_logic will automatically handle the new data source without further modification.
+
+Add forecasts for future dates to create a weekly wardrobe report

@@ -6,6 +6,11 @@
 \usage{
 coords_outfit(lat, long)
 }
+\arguments{
+\item{lat}{Numeric. The latitude of the target node.}
+
+\item{long}{Numeric. The longitude of the target node.}
+}
 \description{
 Recommend by Coordinates
 }
