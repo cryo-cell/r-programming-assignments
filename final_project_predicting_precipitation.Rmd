@@ -1,0 +1,196 @@
+---
+title: "Final Project"
+author: "VaShay Carpenter"
+date: "`r Sys.Date()`"
+output: html_document
+---
+## Install packages
+```{r setup}
+#install.packages("riem")
+library(riem)
+library(ggplot2)
+library(dplyr)
+library(lubridate)
+```
+## Locate a dataset that captivates your interest. Your dataset should contain at least 50 observations and 5 to 20 variables. 
+```{r}
+# Pull riem data for Tampa International (TPA)
+tpa_weather <- riem_measures(station = "TPA", date_start = "2026-01-01")
+
+# Isolate relevant DF columns     
+tpa_weather <- subset(tpa_weather, select = c(valid, alti, relh, tmpf, p01i, vsby))
+
+# Remove Null Values
+tpa_weather <- na.omit(tpa_weather)
+
+# Rename columns
+colnames(tpa_weather) <- c("Date", "Pressure", "Relative Humidity", "TemperatureF", "Precipitation", "Visibility")
+
+# Show correlation between Atmospheric Pressure and Hourly Precipitation amounts
+cor(tpa_weather$Pressure, tpa_weather$Precipitation, use = "complete.obs")
+
+# Plot Pressure vs. Precipitation using a scatter plot with a regression line  
+ggplot(tpa_weather, aes(x = Pressure, y = Precipitation)) +
+  geom_point() +                          
+  geom_smooth(method = "lm", se = FALSE) + 
+  labs(title = "Tampa Hourly Barometric Pressure vs Precipitation 2026", x = "Pressure", y = "Precipitation")
+```
+## R Markdown
+
+
+
+```{r cars}
+# Calculate daily averages and totals
+tpa_daily <- tpa_weather %>%
+  mutate(date_only = as.Date(Date)) %>%
+  group_by(date_only) %>%
+  summarise(
+    avg_pressure = mean(Pressure, na.rm = TRUE),      # Altimeter (Pressure)
+    avg_humidity = mean(`Relative Humidity`, na.rm = TRUE),      # Relative Humidity
+    avg_temp     = mean(TemperatureF, na.rm = TRUE),      # Temperature (F)
+    total_precip = sum(Precipitation, na.rm = TRUE),       # Total Rain per day
+    avg_vis      = mean(Visibility, na.rm = TRUE),      # Visibility (Density proxy)
+    .groups = "drop"
+  )
+
+# Recalculate correlation between Atmospheric Pressure and Daily Precipitation totals
+cor(tpa_daily$avg_pressure, tpa_daily$total_precip, use = "complete.obs")
+
+# Replot Average Daily Pressure vs. Total Daily Precipitation using a scatter plot with a regression line
+ggplot(tpa_daily, aes(x = avg_pressure, y = total_precip)) +
+  geom_point() +                          # Add scatter points
+  geom_smooth(method = "lm", se = FALSE) + # Add linear regression line
+  labs(title = "Tampa's Average Daily Pressure vs Total Daily Precipitation", x = "Pressure", y = "Precipitation")
+
+```
+
+## Including Plots
+
+Create a visualization of your data and discuss your output. You can use any of the apps we covered in the class including: plot.ly, RStudio, Tableau or any app you like. 
+
+```{r pressure, echo=FALSE}
+
+# Plot both the daily precipitation total as well as the average barometric pressure in series
+ggplot(tpa_daily, aes(x = date_only)) +
+  # BAR PLOT: Total Precip (Scaled up for visibility)
+  geom_bar(aes(y = total_precip, fill = "Daily Precip"), 
+           stat = "identity", alpha = 0.6) +
+  # LINE PLOT: Average Pressure (Scaled down)
+  geom_line(aes(y = avg_pressure - 30, color = "Barometric Pressure (Scaled down for visibility)"), size = 1.2, lwd = 0.2) +
+  # FORMATTING
+  scale_fill_manual(values = c("Daily Precip" = "skyblue")) +
+  scale_color_manual(values = c("Barometric Pressure (Scaled down for visibility)" = "red")) +
+  theme_minimal() +
+  labs(
+    title = "Pressure Trends vs. Precipitation Accumulation",
+    subtitle = "TPA Station: Jan 2026 - May 2026",
+    x = "Date",
+    y = "Precipitation",
+    fill = "",
+    color = ""
+  ) +
+  theme(legend.position = "bottom")
+
+# Applying daily plotting logic back to hourly dataset
+ggplot(tpa_weather[50:110,], aes(x = Date)) +
+  # BAR PLOT: Total Precip)
+  geom_bar(aes(y = Precipitation, fill = "Daily Precip"), 
+           stat = "identity") +
+  # LINE PLOT: Average Pressure (Actual values)
+  geom_line(aes(y = Pressure - 30, color = "Barometric Pressure (Scaled down for visibility)"), size = 1.2) +
+  # FORMATTING
+  scale_fill_manual(values = c("Daily Precip" = "skyblue")) +
+  scale_color_manual(values = c("Barometric Pressure (Scaled down for visibility)" = "red")) +
+  theme_minimal() +
+  labs(
+    title = "Pressure Trends vs. Precipitation Accumulation",
+    x = "Date",
+    fill = "",
+    color = ""
+  ) +
+  theme(legend.position = "bottom")
+
+sum(tpa_weather$Precipitation > 0, na.rm = TRUE)
+```
+
+```{r}
+# Create variable markers to determine the onset of rain and 6 hours of atmospheric pressure readings preceding the onset of rain
+tpa_weather <- tpa_weather %>%
+  arrange(Date) %>%
+  mutate(
+    # 6-hour look-back slope
+    pre_rain_slope = lag(Pressure, 1) - lag(Pressure, 7),
+    # Identification of rain onset
+    rain_start = Precipitation > 0 & lag(Precipitation, default = 0) == 0
+  )
+
+# Extract the starts for the Accuracy Calculation
+tpa_leads <- tpa_weather %>% filter(rain_start == TRUE) 
+# Calculate Prediction Accuracy
+successful_predictions <- sum(tpa_leads$pre_rain_slope < 0, na.rm = TRUE)
+total_events <- nrow(tpa_leads)
+prediction_rate <- (successful_predictions / total_events) * 100
+
+# Print Prediction Accuracy using 6 hour look-back time
+print(paste0("CShell Prediction Accuracy: ", round(prediction_rate, 2), "%"))
+
+# Plot using the updated tpa_weather
+ggplot(tpa_weather[400:600,], aes(x = Date)) +
+  geom_line(aes(y = Pressure - 30, color = "Pressure Trend"), size = 1) +
+  
+  # Highlight segments where the 6-hour slope was negative
+  geom_point(data = filter(tpa_weather[400:600,], pre_rain_slope < 0), 
+             aes(y = Pressure - 30), color = "red", size = 2, alpha = 0.6) +
+  # Plot precipitation           
+  geom_bar(aes(y = Precipitation, fill = "Rainfall"), stat = "identity") +
+  # Formatting
+  scale_color_manual(values = c("Pressure Trend" = "grey40")) +
+  scale_fill_manual(values = c("Rainfall" = "skyblue")) +
+  labs(title = "CShell Tactical Telemetry: Lead-Indicator Analysis",
+       subtitle = "Red Indicators = 6-Hour Barometric Decline (Predictive Phase)",
+       y = "Inches / Pressure Deviation (Baseline 30.00)") +
+  theme_minimal()
+
+```
+## Modular Function
+```{r}
+analyze_lead_indicator <- function(station_id, start_date = "2026-01-01") {
+  
+  # 1. Pull and Initial Clean
+  raw_data <- riem_measures(station = station_id, date_start = start_date)
+  
+  clean_data <- raw_data %>%
+    subset(select = c(valid, alti, p01i)) %>%
+    na.omit() %>%
+    arrange(valid) %>%
+    mutate(
+      # 6-hour look-back slope (Lead Indicator Logic)
+      pre_rain_slope = lag(alti, 1) - lag(alti, 7),
+      # Identification of rain onset
+      rain_start = p01i > 0 & lag(p01i, default = 0) == 0,
+      station = station_id
+    )
+  
+  # 2. Calculate Prediction Accuracy
+  starts <- clean_data %>% filter(rain_start == TRUE)
+  successes <- sum(starts$pre_rain_slope < 0, na.rm = TRUE)
+  total_events <- nrow(starts)
+  
+  accuracy <- (successes / total_events) * 100
+  
+  # 3. Output results as a list
+  return(list(
+    accuracy = round(accuracy, 2),
+    data = clean_data,
+    total_events = total_events
+  ))
+}
+
+jfk_res <- analyze_lead_indicator("KJFK")
+mia_res <- analyze_lead_indicator("MIA")
+jax_res <- analyze_lead_indicator("JAX")
+
+jax_res$accuracy
+```
+
+
