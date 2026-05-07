@@ -4,7 +4,9 @@ author: "VaShay Carpenter"
 date: "`r Sys.Date()`"
 output: html_document
 ---
+
 ## Install packages
+
 ```{r setup}
 #install.packages("riem")
 library(riem)
@@ -12,7 +14,9 @@ library(ggplot2)
 library(dplyr)
 library(lubridate)
 ```
-## Locate a dataset that captivates your interest. Your dataset should contain at least 50 observations and 5 to 20 variables. 
+
+## Locate a dataset that captivates your interest. Your dataset should contain at least 50 observations and 5 to 20 variables.
+
 ```{r}
 # Pull riem data for Tampa International (TPA)
 tpa_weather <- riem_measures(station = "TPA", date_start = "2026-01-01")
@@ -35,9 +39,8 @@ ggplot(tpa_weather, aes(x = Pressure, y = Precipitation)) +
   geom_smooth(method = "lm", se = FALSE) + 
   labs(title = "Tampa Hourly Barometric Pressure vs Precipitation 2026", x = "Pressure", y = "Precipitation")
 ```
+
 ## R Markdown
-
-
 
 ```{r cars}
 # Calculate daily averages and totals
@@ -66,7 +69,7 @@ ggplot(tpa_daily, aes(x = avg_pressure, y = total_precip)) +
 
 ## Including Plots
 
-Create a visualization of your data and discuss your output. You can use any of the apps we covered in the class including: plot.ly, RStudio, Tableau or any app you like. 
+Create a visualization of your data and discuss your output. You can use any of the apps we covered in the class including: plot.ly, RStudio, Tableau or any app you like.
 
 ```{r pressure, echo=FALSE}
 
@@ -104,14 +107,16 @@ ggplot(tpa_weather[50:110,], aes(x = Date)) +
   theme_minimal() +
   labs(
     title = "Pressure Trends vs. Precipitation Accumulation",
+        subtitle = "TPA Station: Jan 2026 Precipitation Spike (Zoomed)",
     x = "Date",
     fill = "",
     color = ""
   ) +
   theme(legend.position = "bottom")
 
-sum(tpa_weather$Precipitation > 0, na.rm = TRUE)
 ```
+
+## Determine the accuracy and precision of the proposed methodology and update tpa_weather variable
 
 ```{r}
 # Create variable markers to determine the onset of rain and 6 hours of atmospheric pressure readings preceding the onset of rain
@@ -120,39 +125,111 @@ tpa_weather <- tpa_weather %>%
   mutate(
     # 6-hour look-back slope
     pre_rain_slope = lag(Pressure, 1) - lag(Pressure, 7),
+    # Filter significant declines in pressure only to reduce noise
+    is_significant_signal = pre_rain_slope < -0.01,
     # Identification of rain onset
-    rain_start = Precipitation > 0 & lag(Precipitation, default = 0) == 0
+    rain_start = Precipitation > 0 & lag(Precipitation, default = 0) == 0,
+    # Conditionally distinguish between significant signals
+    signal_type = case_when(
+      is_significant_signal & rain_start == TRUE ~ "True Positive (Hit)",
+      is_significant_signal & rain_start == FALSE ~ "False Positive (Noise)",
+      TRUE ~ "Ambient Noise"
   )
-
+)
 # Extract the starts for the Accuracy Calculation
 tpa_leads <- tpa_weather %>% filter(rain_start == TRUE) 
-# Calculate Prediction Accuracy
-successful_predictions <- sum(tpa_leads$pre_rain_slope < 0, na.rm = TRUE)
-total_events <- nrow(tpa_leads)
-prediction_rate <- (successful_predictions / total_events) * 100
+# 1. Total Count of System 'Pings' (Signals)
+total_signals_fired <- sum(tpa_weather$is_significant_signal, na.rm = TRUE)
 
-# Print Prediction Accuracy using 6 hour look-back time
-print(paste0("CShell Prediction Accuracy: ", round(prediction_rate, 2), "%"))
+# Total Count of Actual Rain Onsets
+total_rain_events <- nrow(tpa_leads)
 
-# Plot using the updated tpa_weather
-ggplot(tpa_weather[400:600,], aes(x = Date)) +
-  geom_line(aes(y = Pressure - 30, color = "Pressure Trend"), size = 1) +
+# Successes and Failures
+successful_hits <- sum(tpa_weather$signal_type == "True Positive (Hit)", na.rm = TRUE)
+false_alarms    <- sum(tpa_weather$signal_type == "False Positive (Noise)", na.rm = TRUE)
+
+# Of all rain events, how many did we catch? 
+prediction_rate <- (successful_hits / total_rain_events) * 100
+
+# PRECISION: Of all the times the alarm went off, how often was it right? 
+true_alarm_precision <- (successful_hits / total_signals_fired) * 100
+
+# NOISE: Of all the times the alarm went off, how often was it WRONG? 
+false_alarm_rate <- (false_alarms / total_signals_fired) * 100
+
+# Print Results
+print(paste0("CShell Hit Rate (Recall): ", round(prediction_rate, 2), "%"))
+print(paste0("CShell Alarm Precision: ", round(true_alarm_precision, 2), "%"))
+print(paste0("CShell False Alarm Rate (Noise): ", round(false_alarm_rate, 2), "%"))
+```
+
+## Plot tpa_weather distinguishing between True and False positives
+
+```{r}
+# Create a plot using the updated tpa_weather
+  ggplot(tpa_weather[400:600,], aes(x = Date)) +
+  geom_line(aes(y = Pressure - 30, color = "Pressure Trend"), lwd = 0.5) +
   
-  # Highlight segments where the 6-hour slope was negative
-  geom_point(data = filter(tpa_weather[400:600,], pre_rain_slope < 0), 
-             aes(y = Pressure - 30), color = "red", size = 2, alpha = 0.6) +
-  # Plot precipitation           
-  geom_bar(aes(y = Precipitation, fill = "Rainfall"), stat = "identity") +
+  # Highlight segments where the signal type indicated a true positive predictor
+  geom_point(data = filter(tpa_weather[400:600,], signal_type == "True Positive (Hit)"), 
+             aes(y = Pressure - 30, color = "True Positive (Hit)"), size = 2, alpha = 0.8) +
+  geom_point(data = filter(tpa_weather[400:600,], signal_type == "False Positive (Noise)"), 
+             aes(y = Pressure - 30, color = "False Positive (Noise)"), size = 1, alpha = 0.4) +
+  
+  # Rain Bars (Set color to NA to prevent red outlines)
+  geom_bar(aes(y = Precipitation, fill = "Rainfall"), stat = "identity", color = NA) +
   # Formatting
-  scale_color_manual(values = c("Pressure Trend" = "grey40")) +
-  scale_fill_manual(values = c("Rainfall" = "skyblue")) +
+  scale_color_manual(values = c(
+    "Pressure Trend" = "grey40",
+    "True Positive (Hit)" = "forestgreen",
+    "False Positive (Noise)" = "firebrick"
+  ))+
+    #Fix fill color mismatch
+    scale_fill_manual(values = c("Rainfall" = "skyblue")) +
   labs(title = "CShell Tactical Telemetry: Lead-Indicator Analysis",
        subtitle = "Red Indicators = 6-Hour Barometric Decline (Predictive Phase)",
        y = "Inches / Pressure Deviation (Baseline 30.00)") +
   theme_minimal()
 
+# Summarizing to Daily 
+tpa_daily_analysis <- tpa_weather %>%
+  mutate(date_only = as.Date(Date)) %>%
+  group_by(date_only) %>%
+  summarise(
+    avg_pressure = mean(Pressure, na.rm = TRUE),
+    total_precip = sum(Precipitation, na.rm = TRUE),
+    # Did we have a successful prediction today?
+    had_hit = any(signal_type == "True Positive (Hit)"),
+    had_noise = any(signal_type == "False Positive (Noise)"),
+    .groups = "drop"
+  )
+
+ggplot(tpa_daily_analysis, aes(x = date_only)) +
+  # 1. Barometric Trend Line
+  geom_line(aes(y = avg_pressure - 30), color = "grey70", size = 0.8) +
+  
+  # 2. Daily Rainfall Bars
+  geom_bar(aes(y = total_precip, fill = "Daily Rainfall"), stat = "identity") +
+  
+  # 3. Successful Hits (Green)
+  geom_point(data = filter(tpa_daily_analysis, had_hit), 
+             aes(y = avg_pressure - 30, color = "Successful Prediction"), size = 2) +
+             
+  # 4. False Positives (Red/Orange)
+  geom_point(data = filter(tpa_daily_analysis, had_noise & !had_hit), 
+             aes(y = avg_pressure - 30, color = "False Positive"), size = 1, alpha = 0.5) +
+
+  scale_color_manual(values = c("Successful Prediction" = "forestgreen", "False Positive" = "firebrick")) +
+  scale_fill_manual(values = c("Daily Rainfall" = "skyblue")) +
+  labs(title = "CShell Semester Analysis: Predictive Success vs. Noise",
+       subtitle = "Tampa International (TPA): Jan - May 2026",
+       y = "Inches / Pressure Deviation") +
+  theme_minimal()
+
 ```
-## Modular Function
+
+## Function to repeat Model Logic
+
 ```{r}
 analyze_lead_indicator <- function(station_id, start_date = "2026-01-01") {
   
@@ -164,12 +241,42 @@ analyze_lead_indicator <- function(station_id, start_date = "2026-01-01") {
     na.omit() %>%
     arrange(valid) %>%
     mutate(
-      # 6-hour look-back slope (Lead Indicator Logic)
-      pre_rain_slope = lag(alti, 1) - lag(alti, 7),
-      # Identification of rain onset
-      rain_start = p01i > 0 & lag(p01i, default = 0) == 0,
-      station = station_id
+      # 6-hour look-back slope
+    pre_rain_slope = lag(alti, 1) - lag(alti, 7),
+    # Filter significant declines in pressure only to reduce noise
+    is_significant_signal = pre_rain_slope < -0.01,
+    # Identification of rain onset
+    rain_start = p01i > 0 & lag(p01i, default = 0) == 0,
+    # Conditionally distinguish between significant signals
+    signal_type = case_when(
+      is_significant_signal & rain_start == TRUE ~ "True Positive (Hit)",
+      is_significant_signal & rain_start == FALSE ~ "False Positive (Noise)",
+      TRUE ~ "Ambient Noise"
     )
+  )
+  
+  # Extract the starts for the Accuracy Calculation
+tpa_leads <- clean_data %>% filter(rain_start == TRUE) 
+# Calculate Prediction Accuracy using updated significance variables
+successful_alerts <- sum(clean_data$signal_type == "True Positive (Hit)", na.rm = TRUE)
+false_alerts <- sum(clean_data$signal_type == "False Positive (Noise)", na.rm = TRUE)
+
+total_events <- nrow(tpa_leads)
+# Successful prediction rate significantly diminished testing pre_rain_slope < -0.02 changed to -0.01
+prediction_rate <- (successful_predictions / total_events) * 100
+# Rain events that happened without a pressure drop.
+# 1. How many total "Alerts" did the system fire?
+total_signals_fired <- sum(clean_data$is_significant_signal, na.rm = TRUE)
+
+# 2. How many of those alerts were WRONG (No rain followed)?
+false_alerts <- sum(clean_data$signal_type == "False Positive (Noise)", na.rm = TRUE)
+
+# 3. Noise Rate = (False Alarms / Total Alarms Fired)
+true_alarm_rate <- (successful_alerts / total_signals_fired)* 100
+false_alarm_rate <- (false_alerts / total_signals_fired) * 100
+# Print Prediction Accuracy using 6 hour look-back time
+print(paste0(station_id," True Alarm Rate: ", round(true_alarm_rate, 2), "%"))
+print(paste0(station_id, " False Alarm Rate: ", round(false_alarm_rate, 2), "%"))
   
   # 2. Calculate Prediction Accuracy
   starts <- clean_data %>% filter(rain_start == TRUE)
@@ -180,17 +287,21 @@ analyze_lead_indicator <- function(station_id, start_date = "2026-01-01") {
   
   # 3. Output results as a list
   return(list(
-    accuracy = round(accuracy, 2),
+    true_accuracy = round(true_alarm_rate, 2),
+    false_accuracy = round(false_alarm_rate, 2),
     data = clean_data,
     total_events = total_events
   ))
 }
+```
 
+# Test Precision on other locations
+
+```{r}
 jfk_res <- analyze_lead_indicator("KJFK")
 mia_res <- analyze_lead_indicator("MIA")
 jax_res <- analyze_lead_indicator("JAX")
-
-jax_res$accuracy
+tpa_res <- analyze_lead_indicator(("TPA"))
 ```
 
-
+Conclusion: While the CShell model successfully identified 70% of precipitation onsets, its 3% Precision and over 95% False Alarm Rate renders it tactically unviable as a standalone alert. This project demonstrates the critical need for multivariate sensor fusion in meteorological telemetry.
