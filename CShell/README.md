@@ -1,10 +1,6 @@
 
 # CShell
 
-<!-- badges: start -->
-
-<!-- badges: end -->
-
 **CShell** is a tactical weather telemetry and logistical engine built
 in R. It automates the extraction of National Weather Service (NWS) data
 and processes it through an internal logic-gate system to provide
@@ -35,7 +31,6 @@ package:
 
 ``` r
 library(CShell)
-## basic example code
 
 # Execute the core engine for a specific node
 weather <- scrape_nws("Largo", 27.91, -82.79)
@@ -48,14 +43,13 @@ outfit <- city_outfit("Largo")
     ## [ C-SHELL TACTICAL REPORT ]
     ## --------------------------------------------
     ## LOC: Largo, Florida | COORDS: 27.91829, -82.774936
-    ## WEATHER: 72F | HUM: 97% | PRECIP: 50%
-    ## SKY:  LIGHT RAIN | RAIN: TRUE | SUNNY: FALSE
+    ## WEATHER: 76F | HUM: 60% | PRECIP: 20%
+    ## SKY: A FEW CLOUDS | RAIN: FALSE | SUNNY: FALSE
     ## --------------------------------------------
     ## Socks           >> Short Socks
     ## Undergarments   >> Breathable Undergarments
     ## Bottoms         >> Shorts
     ## Primary Top     >> Standard T-Shirt
-    ## Apex Shell      >> Rain Shell
     ## SOURCE:  View Raw NWS Telemetry 
     ## --------------------------------------------
 
@@ -75,16 +69,16 @@ print(outfit)
     ## $Weather
     ##   night
     ## 1  TRUE
-    ##                                                                                                                                                                                                                                                                                                                                                                                                                                           text
-    ## 1 a chance of showers and thunderstorms before 11pm, then a slight chance of showers and thunderstorms after 2am. some of the storms could be severe.  mostly cloudy, with a low around 63. west southwest wind 8 to 14 mph becoming north after midnight. winds could gust as high as 21 mph.  chance of precipitation is 50%. new rainfall amounts between a tenth and quarter of an inch, except higher amounts possible in thunderstorms. 
-    ##   cityName temp precip   condition humidity wind    dewpoint is_sunny
-    ## 1    Largo   72     50  light rain      97%    0 71°F (22°C)    FALSE
+    ##                                                                                                                                                                                     text
+    ## 1 a slight chance of showers between 2am and 3am.  partly cloudy, with a low around 68. north northeast wind around 6 mph becoming east after midnight.  chance of precipitation is 20%.
+    ##   cityName temp precip    condition humidity wind    dewpoint is_sunny
+    ## 1    Largo   76     20 a few clouds      60%    8 61°F (16°C)    FALSE
     ##   is_rain_likely
-    ## 1           TRUE
+    ## 1          FALSE
     ##                                                              source_url
     ## 1 https://forecast.weather.gov/MapClick.php?lat=27.91829&lon=-82.774936
     ##           scrape_time
-    ## 1 2026-05-02 18:37:51
+    ## 1 2026-05-04 21:06:56
     ## 
     ## $Outfit
     ## $Outfit$Socks
@@ -106,7 +100,7 @@ print(outfit)
     ## [1] "None"
     ## 
     ## $Outfit$`Apex Shell`
-    ## [1] "Rain Shell"
+    ## [1] "None"
     ## 
     ## $Outfit$Eyewear
     ## [1] "None"
